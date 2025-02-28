@@ -11,7 +11,7 @@ public class ExercicioController {
     @GetMapping("")
     public String HelloWorld(){
         return "Hello";
-}
+    }
 
     @GetMapping("{nome}")
     public String HelloWorld(@PathVariable Optional<String> nome){
@@ -38,4 +38,24 @@ public class ExercicioController {
             return "Idade inválida";
         }
     }
+
+    @GetMapping("/get-num/{num}")
+    public String verificaParImpar(@PathVariable Optional<String> num){
+        num.ifPresent(value -> System.out.println("Numero: " + value));
+ 
+        try{
+        int numInt = Integer.parseInt(num.get());
+        if (numInt % 2 == 0 && numInt > 0){
+            return "Número é par";
+        }else if (numInt % 2 != 0 && numInt > 0){
+            return "Número é impar";
+        }else if (numInt == 0){
+            return "Número é 0";
+        } else {
+            return "Número inválido";
+        }
+    }catch(NumberFormatException e) {
+        return "O valor não é um número, informe novamente";
+    }
+}
 }
