@@ -1,7 +1,7 @@
 package com.programacao.web.fatec.api_fatec.entities;
 
 public class Cliente {
-    private int id;
+    private Long id;
     private String nome;
     private int idade;
     private String endereco;
@@ -9,11 +9,11 @@ public class Cliente {
     public void cliente() {
 
     }
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long idCount) {
+        this.id = idCount;
     }
     public String getNome() {
         return nome;
