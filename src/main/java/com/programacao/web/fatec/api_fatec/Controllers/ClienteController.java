@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,11 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.programacao.web.fatec.api_fatec.domain.cliente.ClienteService;
 import com.programacao.web.fatec.api_fatec.entities.Cliente;
 
 @RestController
 @RequestMapping("/api/cliente")
 public class ClienteController {
+    @Autowired
+    private ClienteService clienteService;
+
     private static final Logger logger = (Logger) LoggerFactory.getLogger(ClienteController.class.getName());
 
     private final List<Cliente> clientes = new ArrayList<>();
@@ -32,7 +38,7 @@ public class ClienteController {
 
     @GetMapping("/listarClientes")
     public List<Cliente> ListarClientes(){
-        return clientes;
+        return clienteService.listarClientes();
     }
 
     @DeleteMapping("/deletarCliente/{id}")
