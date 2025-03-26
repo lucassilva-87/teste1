@@ -1,16 +1,13 @@
 package com.programacao.web.fatec.api_fatec.Controllers;
-import java.util.ArrayList;
+
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.programacao.web.fatec.api_fatec.domain.cliente.ClienteService;
 import com.programacao.web.fatec.api_fatec.entities.Cliente;
@@ -23,32 +20,42 @@ public class ClienteController {
 
     private static final Logger logger = (Logger) LoggerFactory.getLogger(ClienteController.class.getName());
 
-    private final List<Cliente> clientes = new ArrayList<>();
-    private Long idCount = 1L;
-
-    //http://localhost:8080/api/cliente/criarCliente => POST
     @PostMapping("/criarCliente")
-    public String criarCliente(@RequestBody Cliente cliente){
-        cliente.setId(idCount++);
-        clientes.add(cliente);
-
-        logger.info("Recebido JSON: Nome={}, Idade={}");
-        return "O Cliente "+cliente.getNome()+ " de idade "+cliente.getIdade()+ " e endereço "+cliente.getEndereco()+ " foi criado.";
+    public ResponseEntity<Cliente> criarCliente(@RequestBody Cliente cliente) {
+        Cliente novoCliente = clienteService.criarCliente(cliente);
+        logger.info("Cliente criado: Nome={}, Idade={}", novoCliente.getNome(), novoCliente.getIdade());
+        return new ResponseEntity<>(novoCliente, HttpStatus.CREATED);
     }
 
     @GetMapping("/listarClientes")
-    public List<Cliente> ListarClientes(){
-        return clienteService.listarClientes();
+    public ResponseEntity<List<Cliente>> listarClientes() {
+        return new ResponseEntity<>(clienteService.listarClientes(), HttpStatus.OK);
+    }
+
+    @PutMapping("/atualizarCliente/{id}")
+    public ResponseEntity<String> atualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteAtualizado) {
+        boolean atualizado = clienteService.atualizarCliente(id, clienteAtualizado);
+        if (atualizado) {
+            return ResponseEntity.ok("Cliente atualizado com sucesso!");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente com ID " + id + " não encontrado.");
+        }
     }
 
     @DeleteMapping("/deletarCliente/{id}")
-    public String DeletarClientes(@PathVariable Long id){
-        for(Cliente cliente: clientes){
-            if(cliente.getId().equals(id)){
-                clientes.remove(cliente);
-                return "Cliente removido com sucesso!";
-            }
+    public ResponseEntity<String> deletarCliente(@PathVariable Long id) {
+        boolean removido = clienteService.deletarCliente(id);
+        if (removido) {
+            return ResponseEntity.ok("Cliente removido com sucesso!");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existe cliente com id: " + id);
         }
-        return "Não existe cliente com id: "+id;
+    }
+
+    @GetMapping("/buscarCliente/{id}")
+    public ResponseEntity<?> buscarClientePorId(@PathVariable Long id) {
+        Optional<Cliente> cliente = clienteService.buscarClientePorId(id);
+        return cliente.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente com ID " + id + " não encontrado."));
     }
 }
