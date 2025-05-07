@@ -27,5 +27,10 @@ public class UsuarioDetailsService implements UserDetailsService {
 
         return new User(usuario.getNome(), usuario.getSenha(), List.of());
     }
+
+    public UserDetails loadUserByUsername(Object username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
+    }
 }
 
