@@ -20,6 +20,9 @@ public class Usuario {
     @Column(nullable = false, length = 60)
     private String email;
    
+    public Usuario(String string, String string2, String encode) {
+        //TODO Auto-generated constructor stub
+    }
     public void usuario() {
 
     }
