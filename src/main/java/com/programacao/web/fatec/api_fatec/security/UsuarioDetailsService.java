@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +26,11 @@ public class UsuarioDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuário não encontrado.");
         }
 
-        return new User(usuario.getNome(), usuario.getSenha(), List.of());
-    }
-
-    public UserDetails loadUserByUsername(Object username) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
+        return new User(
+            usuario.getNome(),
+            usuario.getSenha(),
+            List.of(new SimpleGrantedAuthority("ROLE_USER")) // role genérica
+        );
     }
 }
 
